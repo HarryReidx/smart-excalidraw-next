@@ -171,6 +171,10 @@ MIT License
 - 💬 分享给更多需要的人
 - 💰 成为赞助者（联系作者微信）
 
+## 友情链接
+
+- https://github.com/ZhangQL2824/auto-drawio.git
+
 ---
 
 ## Star History
