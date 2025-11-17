@@ -12,14 +12,22 @@ export async function GET(request) {
     const baseUrl = searchParams.get('baseUrl');
     const apiKey = searchParams.get('apiKey');
 
-    if (!type || !baseUrl || !apiKey) {
+    if (!type || !baseUrl) {
       return NextResponse.json(
-        { error: 'Missing required parameters: type, baseUrl, apiKey' },
+        { error: 'Missing required parameters: type, baseUrl' },
         { status: 400 }
       );
     }
 
-    const models = await fetchModels(type, baseUrl, apiKey);
+    // Ollama doesn't require API key
+    if (type !== 'ollama' && !apiKey) {
+      return NextResponse.json(
+        { error: 'Missing required parameter: apiKey' },
+        { status: 400 }
+      );
+    }
+
+    const models = await fetchModels(type, baseUrl, apiKey || '');
 
     return NextResponse.json({ models });
   } catch (error) {

@@ -419,8 +419,13 @@ function ConfigEditor({ config, isCreating, onSave, onCancel }) {
   }, [models, formData.model]);
 
   const handleLoadModels = async () => {
-    if (!formData.type || !formData.baseUrl || !formData.apiKey) {
-      setError('请先填写提供商类型、基础 URL 和 API 密钥');
+    if (!formData.type || !formData.baseUrl) {
+      setError('请先填写提供商类型和基础 URL');
+      return;
+    }
+
+    if (formData.type !== 'ollama' && !formData.apiKey) {
+      setError('请先填写 API 密钥');
       return;
     }
 
@@ -431,7 +436,7 @@ function ConfigEditor({ config, isCreating, onSave, onCancel }) {
       const params = new URLSearchParams({
         type: formData.type,
         baseUrl: formData.baseUrl,
-        apiKey: formData.apiKey,
+        apiKey: formData.apiKey || '',
       });
 
       const response = await fetch(`/api/models?${params}`);
@@ -451,8 +456,13 @@ function ConfigEditor({ config, isCreating, onSave, onCancel }) {
   };
 
   const handleSave = () => {
-    if (!formData.name || !formData.type || !formData.baseUrl || !formData.apiKey || !formData.model) {
+    if (!formData.name || !formData.type || !formData.baseUrl || !formData.model) {
       setError('请填写所有必填字段');
+      return;
+    }
+
+    if (formData.type !== 'ollama' && !formData.apiKey) {
+      setError('请填写 API 密钥');
       return;
     }
 
@@ -524,6 +534,8 @@ function ConfigEditor({ config, isCreating, onSave, onCancel }) {
             >
               <option value="openai">OpenAI</option>
               <option value="anthropic">Anthropic</option>
+              <option value="qwen">Qwen (通义千问)</option>
+              <option value="ollama">Ollama (本地)</option>
             </select>
           </div>
 
@@ -535,20 +547,26 @@ function ConfigEditor({ config, isCreating, onSave, onCancel }) {
               type="text"
               value={formData.baseUrl}
               onChange={(e) => setFormData({ ...formData, baseUrl: e.target.value })}
-              placeholder={formData.type === 'openai' ? 'https://api.openai.com/v1' : 'https://api.anthropic.com/v1'}
+              placeholder={
+                formData.type === 'openai' ? 'https://api.openai.com/v1' :
+                formData.type === 'anthropic' ? 'https://api.anthropic.com/v1' :
+                formData.type === 'qwen' ? 'https://dashscope.aliyuncs.com/compatible-mode/v1' :
+                formData.type === 'ollama' ? 'http://localhost:11434/v1' : ''
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-900"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              API 密钥 <span className="text-red-500">*</span>
+              API 密钥 {formData.type !== 'ollama' && <span className="text-red-500">*</span>}
+              {formData.type === 'ollama' && <span className="text-gray-500 text-xs">(本地模型无需密钥)</span>}
             </label>
             <input
               type="password"
               value={formData.apiKey}
               onChange={(e) => setFormData({ ...formData, apiKey: e.target.value })}
-              placeholder="sk-..."
+              placeholder={formData.type === 'ollama' ? '本地模型无需密钥，可留空' : 'sk-...'}
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-900"
             />
           </div>

@@ -57,8 +57,12 @@ Read the English version: [README_EN.md](README_EN.md)
 ### 方式二：配置自己的 AI
 
 1. 点击右上角的 **"配置 LLM"** 按钮
-2. 选择提供商类型（OpenAI 或 Anthropic）
-3. 填入你的 API Key
+2. 选择提供商类型：
+   - **OpenAI** - 使用 GPT 系列模型
+   - **Anthropic** - 使用 Claude 系列模型（**推荐 claude-sonnet-4.5**）
+   - **Qwen (通义千问)** - 使用阿里云通义千问模型
+   - **Ollama (本地)** - 使用本地部署的开源模型，无需 API Key
+3. 填入相应的配置信息（Ollama 本地模型无需 API Key）
 4. 选择模型（**推荐使用 claude-sonnet-4.5**，效果最佳）
 5. 保存配置
 
@@ -105,13 +109,17 @@ cp .env.example
 # 访问密码（用户需要输入此密码才能使用服务器端 LLM）
 ACCESS_PASSWORD=your-secure-password
 
-# LLM 提供商类型（openai 或 anthropic）
+# LLM 提供商类型（openai、anthropic、qwen 或 ollama）
 SERVER_LLM_TYPE=anthropic
 
 # API 基础 URL
+# OpenAI: https://api.openai.com/v1
+# Anthropic: https://api.anthropic.com/v1
+# Qwen: https://dashscope.aliyuncs.com/compatible-mode/v1
+# Ollama: http://localhost:11434/v1
 SERVER_LLM_BASE_URL=https://api.anthropic.com/v1
 
-# API 密钥
+# API 密钥（Ollama 本地模型无需配置）
 SERVER_LLM_API_KEY=sk-ant-your-key-here
 
 # 模型名称
@@ -145,6 +153,16 @@ A: 访问密码功能允许服务器管理员配置统一的 LLM，用户只需�
 
 **Q: 访问密码和本地配置的优先级是什么？**
 A: 如果启用了访问密码，系统将优先使用服务器端的 LLM 配置。只有在未启用访问密码时，才会使用本地配置的 API Key。
+
+**Q: 支持哪些 AI 提供商？**
+A: 目前支持：
+- **OpenAI** - GPT 系列模型
+- **Anthropic** - Claude 系列模型（推荐）
+- **Qwen (通义千问)** - 阿里云大语言模型
+- **Ollama** - 本地开源模型（无需 API Key）
+
+**Q: 如何使用 Ollama 本地模型？**
+A: 首先需要在本地安装并运行 Ollama 服务，然后在配置中选择 Ollama 类型，填入本地地址（默认 `http://localhost:11434/v1`），无需填写 API Key。详见 [Ollama 官网](https://ollama.ai)。
 
 ## 🛠️ 技术栈
 

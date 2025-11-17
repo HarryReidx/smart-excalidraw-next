@@ -36,8 +36,13 @@ export default function ConfigModal({ isOpen, onClose, onSave, initialConfig, sh
   }, [models, config.model]);
 
   const handleLoadModels = async () => {
-    if (!config.type || !config.baseUrl || !config.apiKey) {
-      setError('请先填写提供商类型、基础 URL 和 API 密钥');
+    if (!config.type || !config.baseUrl) {
+      setError('请先填写提供商类型和基础 URL');
+      return;
+    }
+
+    if (config.type !== 'ollama' && !config.apiKey) {
+      setError('请先填写 API 密钥');
       return;
     }
 
@@ -48,7 +53,7 @@ export default function ConfigModal({ isOpen, onClose, onSave, initialConfig, sh
       const params = new URLSearchParams({
         type: config.type,
         baseUrl: config.baseUrl,
-        apiKey: config.apiKey,
+        apiKey: config.apiKey || '',
       });
 
       const response = await fetch(`/api/models?${params}`);
@@ -78,8 +83,13 @@ export default function ConfigModal({ isOpen, onClose, onSave, initialConfig, sh
   };
 
   const handleSave = () => {
-    if (!config.type || !config.baseUrl || !config.apiKey || !config.model) {
+    if (!config.type || !config.baseUrl || !config.model) {
       setError('请填写所有必填字段');
+      return;
+    }
+
+    if (config.type !== 'ollama' && !config.apiKey) {
+      setError('请填写 API 密钥');
       return;
     }
 
@@ -150,6 +160,8 @@ export default function ConfigModal({ isOpen, onClose, onSave, initialConfig, sh
             >
               <option value="openai">OpenAI</option>
               <option value="anthropic">Anthropic</option>
+              <option value="qwen">Qwen (通义千问)</option>
+              <option value="ollama">Ollama (本地)</option>
             </select>
           </div>
 
@@ -162,7 +174,12 @@ export default function ConfigModal({ isOpen, onClose, onSave, initialConfig, sh
               type="text"
               value={config.baseUrl}
               onChange={(e) => setConfig({ ...config, baseUrl: e.target.value })}
-              placeholder={config.type === 'openai' ? 'https://api.openai.com/v1' : 'https://api.anthropic.com/v1'}
+              placeholder={
+                config.type === 'openai' ? 'https://api.openai.com/v1' :
+                config.type === 'anthropic' ? 'https://api.anthropic.com/v1' :
+                config.type === 'qwen' ? 'https://dashscope.aliyuncs.com/compatible-mode/v1' :
+                config.type === 'ollama' ? 'http://localhost:11434/v1' : ''
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-900"
             />
           </div>
@@ -170,13 +187,14 @@ export default function ConfigModal({ isOpen, onClose, onSave, initialConfig, sh
           {/* API Key */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              API 密钥 <span className="text-red-500">*</span>
+              API 密钥 {config.type !== 'ollama' && <span className="text-red-500">*</span>}
+              {config.type === 'ollama' && <span className="text-gray-500 text-xs">(本地模型无需密钥)</span>}
             </label>
             <input
               type="password"
               value={config.apiKey}
               onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
-              placeholder="sk-..."
+              placeholder={config.type === 'ollama' ? '本地模型无需密钥，可留空' : 'sk-...'}
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-900"
             />
           </div>

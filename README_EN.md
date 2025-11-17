@@ -49,8 +49,12 @@ Once enabled, the application will prioritize the server-side configuration, and
 ### Option 2: Configure Your Own AI
 
 1. Click the **"Configure LLM"** button in the top right corner
-2. Select provider type (OpenAI or Anthropic)
-3. Enter your API Key
+2. Select provider type:
+   - **OpenAI** - Use GPT series models
+   - **Anthropic** - Use Claude series models (**Highly recommend claude-sonnet-4.5**)
+   - **Qwen** - Use Alibaba Cloud Qwen models
+   - **Ollama (Local)** - Use locally deployed open-source models, no API Key required
+3. Enter the corresponding configuration information (Ollama local models don't require API Key)
 4. Select model (**Highly recommend claude-sonnet-4.5** for best results)
 5. Save configuration
 
@@ -97,13 +101,17 @@ cp .env.example .env
 # Access password (users need to enter this password to use server-side LLM)
 ACCESS_PASSWORD=your-secure-password
 
-# LLM provider type (openai or anthropic)
+# LLM provider type (openai, anthropic, qwen, or ollama)
 SERVER_LLM_TYPE=anthropic
 
 # API base URL
+# OpenAI: https://api.openai.com/v1
+# Anthropic: https://api.anthropic.com/v1
+# Qwen: https://dashscope.aliyuncs.com/compatible-mode/v1
+# Ollama: http://localhost:11434/v1
 SERVER_LLM_BASE_URL=https://api.anthropic.com/v1
 
-# API key
+# API key (not required for Ollama local models)
 SERVER_LLM_API_KEY=sk-ant-your-key-here
 
 # Model name
@@ -123,6 +131,8 @@ SERVER_LLM_MODEL=claude-sonnet-4-5-20250929
 ### Supported LLM Providers
 - **OpenAI**: GPT-4, GPT-3.5 and other compatible models
 - **Anthropic**: Claude-3.5-Sonnet, Claude-3-Opus and other compatible models
+- **Qwen**: Alibaba Cloud Qwen series models (qwen-max, qwen-plus, qwen-turbo, etc.)
+- **Ollama**: Locally deployed open-source models (llama2, mistral, codellama, etc.) - No API Key required
 
 ### API Configuration
 1. Get API keys from your chosen provider
@@ -152,6 +162,16 @@ A: If access password is enabled, the system will prioritize the server-side LLM
 
 **Q: Does it support multiple languages?**
 A: Yes! The interface now supports both Chinese and English, with automatic language detection based on browser settings.
+
+**Q: Which AI providers are supported?**
+A: Currently supports:
+- **OpenAI** - GPT series models
+- **Anthropic** - Claude series models (recommended)
+- **Qwen** - Alibaba Cloud large language models
+- **Ollama** - Local open-source models (no API Key required)
+
+**Q: How to use Ollama local models?**
+A: First, install and run Ollama service locally, then select Ollama type in configuration, enter local address (default `http://localhost:11434/v1`), no need to fill in API Key. See [Ollama Official Website](https://ollama.ai) for details.
 
 ## 🛠️ Tech Stack
 
